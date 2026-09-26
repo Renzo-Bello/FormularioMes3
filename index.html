@@ -6,443 +6,216 @@
 <title>STRENGTHLAB · Cierre Trimestral</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;600;700&display=swap');
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --navy:       #080e1c;
-  --navy-2:     #0d1628;
-  --navy-3:     #111e35;
-  --navy-4:     #162340;
-  --sky:        #7eb8ff;
-  --sky-dim:    #1a3a6b;
-  --sky-glow:   rgba(126,184,255,0.12);
-  --gold:       #c9a84c;
-  --gold-dim:   rgba(201,168,76,0.15);
-  --text:       #e8edf5;
-  --text-soft:  #8899b0;
-  --text-muted: #4a5568;
-  --border:     rgba(77,184,255,0.14);
-  --border-strong: rgba(77,184,255,0.28);
-  --white:      #ffffff;
-  --radius:     8px;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@200;300;400;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#07111f;--navy-2:#0b1929;--navy-3:#0f2038;--navy-4:#132645;
+  --sky:#7eb8ff;--sky-dim:#1a3a6b;--sky-glow:rgba(126,184,255,0.10);
+  --gold:#c9a84c;--gold-dim:#3a2a08;--gold-glow:rgba(201,168,76,0.10);
+  --text:#dde5f0;--text-soft:#7a90aa;--text-muted:#3d5268;
+  --border:rgba(126,184,255,0.13);--border-strong:rgba(126,184,255,0.26);--radius:8px;
 }
-
-html { scroll-behavior: smooth; }
-body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--text); min-height: 100vh; }
-
-/* ── SELECTOR ── */
-#selector {
-  min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 3rem 2rem; gap: 3rem;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(77,184,255,0.07) 0%, transparent 70%);
-}
-
-.brand-block {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-}
-.brand-name {
-  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-  letter-spacing: 0.35em; color: var(--sky); text-transform: uppercase;
-}
-.brand-rule {
-  width: 40px; height: 1px; background: var(--sky-dim); margin: 4px auto;
-}
-.brand-handle { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; }
-
-.selector-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0; }
-.eyebrow {
-  font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--text-muted); margin-bottom: 1rem;
-}
-.selector-header h1 {
-  font-family: 'Outfit', sans-serif; font-size: clamp(2.2rem, 6vw, 3.4rem);
-  font-weight: 300; color: var(--text); line-height: 1.1; margin-bottom: 1.25rem;
-  letter-spacing: -0.03em;
-}
-.selector-header h1 em { font-style: normal; font-weight: 600; color: var(--sky); }
-.selector-header p { font-size: 14px; color: var(--text-soft); max-width: 380px; line-height: 1.7; font-weight: 300; }
-
-.cards-row { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
-
-.form-card {
-  background: var(--navy-3); border: 1px solid var(--border);
-  border-radius: 16px; padding: 2.25rem 2rem; width: 232px; cursor: pointer;
-  transition: transform 0.22s, border-color 0.22s, background 0.22s;
-  text-align: left; display: flex; flex-direction: column; gap: 1rem;
-  position: relative; overflow: hidden;
-}
-.form-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--sky), transparent);
-  opacity: 0; transition: opacity 0.22s;
-}
-.form-card:hover { transform: translateY(-5px); border-color: var(--border-strong); background: var(--navy-4); }
-.form-card:hover::before { opacity: 1; }
-
-.card-num {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
-  color: var(--sky); text-transform: uppercase;
-}
-.form-card h2 {
-  font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 600;
-  letter-spacing: -0.02em; color: var(--text); line-height: 1.2;
-}
-.form-card p { font-size: 12.5px; color: var(--text-soft); line-height: 1.6; font-weight: 300; }
-.card-arrow { font-size: 18px; color: var(--sky); margin-top: auto; }
-
-/* ── FORMULARIO ── */
-#formulario { display: none; background: var(--navy); }
-
-.form-wrap { max-width: 660px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
-
-.form-top {
-  display: flex; align-items: flex-start; gap: 1.25rem; margin-bottom: 3rem;
-  padding-bottom: 2rem; border-bottom: 1px solid var(--border);
-}
-.back-btn {
-  background: none; border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 0.45rem 1rem; font-size: 12px; color: var(--text-soft); letter-spacing: 0.05em;
-  cursor: pointer; transition: border-color 0.15s, color 0.15s; flex-shrink: 0; margin-top: 4px;
-}
-.back-btn:hover { border-color: var(--sky); color: var(--sky); }
-
-.form-title-block { flex: 1; }
-.form-brand { font-size: 10px; font-weight: 600; letter-spacing: 0.22em; color: var(--sky); text-transform: uppercase; margin-bottom: 6px; }
-.form-title-block h2 {
-  font-family: 'Outfit', sans-serif; font-size: 1.9rem; font-weight: 300;
-  letter-spacing: -0.03em; color: var(--text); line-height: 1.15; margin-bottom: 3px;
-}
-.form-title-block p { font-size: 13px; color: var(--text-muted); font-weight: 300; }
-
-/* Secciones */
-.section {
-  background: var(--navy-2); border: 1px solid var(--border);
-  border-radius: 12px; padding: 1.75rem 1.75rem; margin-bottom: 1rem;
-  position: relative;
-}
-.section::before {
-  content: ''; position: absolute; top: 0; left: 1.75rem; right: 1.75rem; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(77,184,255,0.2), transparent);
-}
-
-.section-label {
-  font-size: 9px; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--sky); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;
-}
-.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-.field { margin-bottom: 1.35rem; }
-.field:last-child { margin-bottom: 0; }
-.field label {
-  display: block; font-size: 13px; font-weight: 400; color: var(--text);
-  margin-bottom: 0.5rem; line-height: 1.5; letter-spacing: 0.01em;
-}
-.field-hint { font-size: 11.5px; color: var(--text-muted); margin-top: -0.2rem; margin-bottom: 0.5rem; }
-
-.field-num {
-  display: inline-block; width: 18px; height: 18px; border: 1px solid var(--sky-dim);
-  color: var(--sky); border-radius: 50%; font-size: 9px; font-weight: 600;
-  text-align: center; line-height: 17px; margin-right: 8px; flex-shrink: 0;
-}
-
-input[type="text"], input[type="number"], textarea {
-  width: 100%; padding: 0.65rem 1rem; border: 1px solid var(--border);
-  border-radius: var(--radius); font-family: 'Inter', sans-serif; font-size: 14px;
-  font-weight: 300; color: var(--text); background: var(--navy-3);
-  transition: border-color 0.15s, background 0.15s; outline: none;
-}
-input:focus, textarea:focus {
-  border-color: var(--sky); background: var(--navy-4);
-}
-input::placeholder, textarea::placeholder { color: var(--text-muted); font-weight: 300; }
-textarea { resize: vertical; min-height: 85px; line-height: 1.6; }
-
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-/* Escala */
-.scale-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 4px; }
-.scale-btn {
-  width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 8px;
-  background: transparent; font-size: 13px; font-weight: 400; cursor: pointer;
-  color: var(--text-soft); transition: all 0.15s;
-  display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif;
-}
-.scale-btn:hover { border-color: var(--sky); color: var(--sky); background: var(--sky-glow); }
-.scale-btn.active { background: var(--sky); color: var(--navy); border-color: var(--sky); font-weight: 600; }
-.scale-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); letter-spacing: 0.02em; }
-
-/* Radio */
-.radio-group { display: flex; flex-direction: column; gap: 0.45rem; }
-.radio-item {
-  display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1rem;
-  border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer;
-  transition: border-color 0.15s, background 0.15s; font-size: 13px; color: var(--text-soft);
-  font-weight: 300;
-}
-.radio-item:hover { border-color: var(--sky); background: var(--sky-glow); color: var(--text); }
-.radio-item input[type="radio"] { width: 15px; height: 15px; accent-color: var(--sky); flex-shrink: 0; padding: 0; }
-
-/* Nota psico */
-.psico-note {
-  background: rgba(77,184,255,0.05); border-left: 2px solid var(--sky-dim);
-  padding: 0.75rem 1rem; font-size: 12px; color: var(--text-soft); margin-bottom: 1.25rem;
-  line-height: 1.7; font-weight: 300; border-radius: 0 6px 6px 0;
-}
-
-/* Submit */
-.submit-area { margin-top: 2.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.85rem; }
-.btn-submit {
-  background: var(--sky); color: var(--navy); border: none; border-radius: 10px;
-  padding: 1rem 2.5rem; font-size: 14px; font-weight: 600; cursor: pointer;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  transition: background 0.15s, transform 0.1s; width: 100%; max-width: 340px;
-  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-}
-.btn-submit:hover { background: #7dd3fc; }
-.btn-submit:active { transform: scale(0.98); }
-.submit-note { font-size: 11.5px; color: var(--text-muted); text-align: center; font-weight: 300; }
-
-/* Toast */
-.toast {
-  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--navy-4); border: 1px solid var(--border-strong); color: var(--text);
-  padding: 0.75rem 1.5rem; border-radius: 10px; font-size: 13px; font-weight: 500;
-  opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100; white-space: nowrap;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-@media (max-width: 600px) {
-  .row-2 { grid-template-columns: 1fr; }
-  .cards-row { flex-direction: column; align-items: center; }
-  .form-card { width: 100%; max-width: 340px; }
-}
-
-/* PORTADA */
-#portada{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;position:relative;overflow:hidden;background:var(--navy);}
-#portada::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(126,184,255,0.10) 0%,transparent 65%),radial-gradient(ellipse 40% 30% at 80% 90%,rgba(201,168,76,0.06) 0%,transparent 60%);pointer-events:none;}
-.portada-inner{display:flex;flex-direction:column;align-items:center;gap:0;max-width:460px;width:100%;position:relative;z-index:1;}
-.portada-brand{display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:3.5rem;}
-.portada-brand-name{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.4em;color:var(--sky);text-transform:uppercase;}
-.portada-rule{width:32px;height:1px;background:var(--sky-dim);margin:4px 0;}
-.portada-brand-handle{font-size:10px;color:var(--text-muted);letter-spacing:0.1em;}
-.portada-tag{font-size:9px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--sky);margin-bottom:1.25rem;opacity:0.8;}
-.portada-title{font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(2.6rem,8vw,4rem);color:var(--text);line-height:1.05;letter-spacing:-0.03em;text-align:center;margin-bottom:0.5rem;}
-.portada-title strong{font-weight:700;color:var(--sky);display:block;}
-.portada-subtitle{font-size:13px;color:var(--text-soft);font-weight:300;text-align:center;line-height:1.7;margin-bottom:3rem;max-width:320px;}
-.portada-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border-strong),transparent);margin-bottom:3rem;}
-.portada-meta{display:flex;gap:2.5rem;justify-content:center;margin-bottom:3rem;flex-wrap:wrap;}
-.portada-meta-item{display:flex;flex-direction:column;align-items:center;gap:4px;}
-.portada-meta-num{font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:700;color:var(--sky);line-height:1;letter-spacing:-0.03em;}
-.portada-meta-label{font-size:10px;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;}
-.portada-cta{background:var(--sky);color:var(--navy);border:none;border-radius:10px;padding:1rem 2.75rem;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;transition:background 0.15s,transform 0.1s;width:100%;max-width:280px;}
-.portada-cta:hover{background:#a8d4ff;}.portada-cta:active{transform:scale(0.98);}
-.portada-note{margin-top:1rem;font-size:11px;color:var(--text-muted);text-align:center;font-weight:300;}
-
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;}
+#portada{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;position:relative;overflow:hidden;}
+#portada::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 60% at 50% -5%,rgba(201,168,76,0.08) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 95%,rgba(201,168,76,0.05) 0%,transparent 55%);pointer-events:none;}
+#portada::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.25),transparent);}
+.p-inner{display:flex;flex-direction:column;align-items:center;max-width:440px;width:100%;position:relative;z-index:1;}
+.p-brand{margin-bottom:4rem;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.p-brand-name{font-size:10px;font-weight:600;letter-spacing:0.45em;color:var(--sky);text-transform:uppercase;}
+.p-brand-line{width:28px;height:1px;background:rgba(201,168,76,0.3);margin:3px 0;}
+.p-brand-handle{font-size:10px;color:var(--text-muted);letter-spacing:0.08em;}
+.p-eyebrow{font-size:9px;font-weight:500;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);margin-bottom:1.25rem;}
+.p-title{font-family:'Outfit',sans-serif;font-weight:200;font-size:clamp(3rem,9vw,4.5rem);line-height:0.95;letter-spacing:-0.04em;text-align:center;margin-bottom:0.6rem;color:var(--text);}
+.p-title strong{font-weight:700;color:var(--gold);display:block;font-size:clamp(3.2rem,9.5vw,4.8rem);}
+.p-sub{font-size:13px;color:var(--text-soft);font-weight:300;text-align:center;line-height:1.75;margin-bottom:3.5rem;max-width:300px;}
+.p-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);margin-bottom:3.5rem;}
+.p-stats{display:flex;gap:3rem;justify-content:center;margin-bottom:3.5rem;}
+.p-stat{display:flex;flex-direction:column;align-items:center;gap:5px;}
+.p-stat-n{font-family:'Outfit',sans-serif;font-size:2.4rem;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-0.04em;}
+.p-stat-l{font-size:9px;color:var(--text-muted);letter-spacing:0.14em;text-transform:uppercase;}
+.p-cta{background:var(--gold);color:var(--navy);border:none;border-radius:10px;padding:1.05rem 0;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:0.12em;text-transform:uppercase;transition:background 0.15s,transform 0.1s;width:100%;max-width:260px;font-family:'Inter',sans-serif;}
+.p-cta:hover{background:#e0bf6e;}.p-cta:active{transform:scale(0.98);}
+.p-note{margin-top:1.1rem;font-size:11px;color:var(--text-muted);text-align:center;font-weight:300;line-height:1.6;}
+#formulario{display:none;}
+.fw{max-width:640px;margin:0 auto;padding:2.5rem 1.25rem 6rem;}
+.f-top{display:flex;align-items:center;gap:1rem;margin-bottom:2.5rem;padding-bottom:1.75rem;border-bottom:1px solid var(--border);}
+.back-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.9rem;font-size:11px;color:var(--text-soft);letter-spacing:0.06em;cursor:pointer;transition:border-color 0.15s,color 0.15s;flex-shrink:0;font-family:'Inter',sans-serif;}
+.back-btn:hover{border-color:var(--sky);color:var(--sky);}
+.f-brand{font-size:9px;font-weight:600;letter-spacing:0.25em;color:var(--sky);text-transform:uppercase;margin-bottom:4px;}
+.f-title{font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:300;letter-spacing:-0.03em;color:var(--text);line-height:1.1;}
+.f-sub{font-size:12px;color:var(--text-muted);font-weight:300;margin-top:2px;}
+.sec{background:var(--navy-2);border:1px solid var(--border);border-radius:14px;padding:1.75rem;margin-bottom:0.85rem;position:relative;overflow:hidden;}
+.sec::after{content:'';position:absolute;top:0;left:2rem;right:2rem;height:1px;background:linear-gradient(90deg,transparent,rgba(126,184,255,0.18),transparent);}
+.sec.gold::after{background:linear-gradient(90deg,transparent,rgba(201,168,76,0.18),transparent);}
+.sec-label{font-size:8.5px;font-weight:600;letter-spacing:0.24em;text-transform:uppercase;color:var(--sky);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px;opacity:0.9;}
+.sec-label.g{color:var(--gold);}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.sec-label.g::after{background:rgba(201,168,76,0.2);}
+.psico-note{background:rgba(126,184,255,0.05);border-left:2px solid var(--sky-dim);padding:0.75rem 1rem;font-size:12px;color:var(--text-soft);margin-bottom:1.5rem;line-height:1.7;font-weight:300;border-radius:0 6px 6px 0;}
+.field{margin-bottom:1.35rem;}.field:last-child{margin-bottom:0;}
+.field label{display:block;font-size:13px;font-weight:400;color:var(--text);margin-bottom:0.55rem;line-height:1.55;}
+.fnum{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border:1px solid rgba(126,184,255,0.3);color:var(--sky);border-radius:50%;font-size:8.5px;font-weight:600;margin-right:7px;flex-shrink:0;vertical-align:middle;}
+.fnum.g{border-color:rgba(201,168,76,0.3);color:var(--gold);}
+input[type="text"],input[type="number"],textarea{width:100%;padding:0.7rem 1rem;border:1px solid var(--border);border-radius:var(--radius);font-family:'Inter',sans-serif;font-size:14px;font-weight:300;color:var(--text);background:var(--navy-3);transition:border-color 0.15s,background 0.15s;outline:none;}
+input:focus,textarea:focus{border-color:rgba(126,184,255,0.5);background:var(--navy-4);}
+input::placeholder,textarea::placeholder{color:var(--text-muted);font-weight:300;}
+textarea{resize:vertical;min-height:88px;line-height:1.65;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.scale-row{display:flex;gap:0.35rem;flex-wrap:wrap;margin-bottom:5px;}
+.scale-btn{width:42px;height:42px;border:1px solid var(--border);border-radius:8px;background:transparent;font-size:13px;cursor:pointer;color:var(--text-soft);transition:all 0.15s;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;}
+.scale-btn:hover{border-color:var(--sky);color:var(--sky);background:var(--sky-glow);}
+.scale-btn.active{background:var(--sky);color:var(--navy);border-color:var(--sky);font-weight:600;}
+.scale-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);}
+.sel-list{display:flex;flex-direction:column;gap:0.4rem;}
+.sel-item{display:flex;align-items:center;gap:0.85rem;padding:0.7rem 1rem;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:border-color 0.15s,background 0.15s;font-size:13px;color:var(--text-soft);font-weight:300;background:transparent;font-family:'Inter',sans-serif;text-align:left;width:100%;}
+.sel-item:hover{border-color:var(--sky);background:var(--sky-glow);color:var(--text);}
+.sel-item.active{border-color:rgba(126,184,255,0.5);background:var(--sky-glow);color:var(--text);}
+.sel-dot{width:6px;height:6px;border-radius:50%;border:1px solid currentColor;flex-shrink:0;}
+.sel-item.active .sel-dot{background:var(--sky);border-color:var(--sky);}
+.radio-group{display:flex;flex-direction:column;gap:0.4rem;}
+.radio-item{display:flex;align-items:center;gap:0.85rem;padding:0.7rem 1rem;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:border-color 0.15s,background 0.15s;font-size:13px;color:var(--text-soft);font-weight:300;}
+.radio-item:hover{border-color:var(--sky);background:var(--sky-glow);color:var(--text);}
+.radio-item input[type="radio"]{width:14px;height:14px;accent-color:var(--sky);flex-shrink:0;padding:0;}
+.submit-area{margin-top:2.5rem;display:flex;flex-direction:column;align-items:center;gap:0.85rem;}
+.btn-submit{background:var(--gold);color:var(--navy);border:none;border-radius:10px;padding:1.05rem 2.5rem;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.1em;text-transform:uppercase;transition:background 0.15s,transform 0.1s;width:100%;max-width:320px;font-family:'Inter',sans-serif;}
+.btn-submit:hover{background:#e0bf6e;}.btn-submit:active{transform:scale(0.98);}
+.btn-submit:disabled{opacity:0.6;cursor:not-allowed;}
+.submit-note{font-size:11px;color:var(--text-muted);text-align:center;font-weight:300;}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy-4);border:1px solid var(--border-strong);color:var(--text);padding:0.75rem 1.5rem;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;pointer-events:none;z-index:100;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:600px){.row-2{grid-template-columns:1fr;}.p-stats{gap:2rem;}}
 </style>
 </head>
 <body>
-
-
-<!-- PORTADA -->
 <div id="portada">
-  <div class="portada-inner">
-    <div class="portada-brand">
-      <span class="portada-brand-name">Strengthlab</span>
-      <div class="portada-rule"></div>
-      <span class="portada-brand-handle">@rennzolifts</span>
+  <div class="p-inner">
+    <div class="p-brand">
+      <span class="p-brand-name">Strengthlab</span>
+      <div class="p-brand-line"></div>
+      <span class="p-brand-handle">@rennzolifts</span>
     </div>
-    <p class="portada-tag">Cierre trimestral</p>
-    <h1 class="portada-title">Tres<strong>meses</strong></h1>
-    <p class="portada-subtitle">Revisión completa del trimestre. Resultados, emociones, aprendizajes y mirada hacia el próximo ciclo.</p>
-    <div class="portada-divider"></div>
-    <div class="portada-meta">
-      <div class="portada-meta-item">
-        <span class="portada-meta-num">25</span>
-        <span class="portada-meta-label">Preguntas</span>
-      </div>
-      <div class="portada-meta-item">
-        <span class="portada-meta-num">03</span>
-        <span class="portada-meta-label">Meses</span>
-      </div>
+    <p class="p-eyebrow">Cierre trimestral</p>
+    <h1 class="p-title">Tres<strong>meses</strong></h1>
+    <p class="p-sub">Revisión completa del trimestre. Resultados, emociones, aprendizajes y la mirada hacia lo que viene.</p>
+    <div class="p-divider"></div>
+    <div class="p-stats">
+      <div class="p-stat"><span class="p-stat-n">15</span><span class="p-stat-l">Preguntas</span></div>
+      <div class="p-stat"><span class="p-stat-n">03</span><span class="p-stat-l">Meses</span></div>
     </div>
-    <button class="portada-cta" onclick="mostrarForm()">Comenzar →</button>
-    <p class="portada-note">Al finalizar se genera un PDF para que envíes por WhatsApp</p>
+    <button class="p-cta" onclick="mostrarForm()">Comenzar →</button>
+    <p class="p-note">Al finalizar se genera un PDF<br>para que envíes por WhatsApp</p>
   </div>
 </div>
 
-<!-- FORMULARIO -->
 <div id="formulario">
-  <div class="form-wrap">
-    <div class="form-top">
+  <div class="fw">
+    <div class="f-top">
       <button class="back-btn" onclick="volver()">← Volver</button>
-      <div class="form-title-block">
-        <p class="form-brand">Strengthlab</p>
-        <h2 id="form-titulo">Formulario</h2>
-        <p id="form-subtitulo"></p>
+      <div>
+        <p class="f-brand">Strengthlab</p>
+        <h2 class="f-title">Cierre trimestral</h2>
+        <p class="f-sub">Revisión completa de los 3 meses</p>
       </div>
     </div>
 
-    <!-- DATOS PERSONALES -->
-    <div class="section">
-      <p class="section-label">Datos personales</p>
+    <div class="sec">
+      <p class="sec-label">Sobre ti</p>
       <div class="field">
-        <label><span class="field-num">1</span>Nombre completo</label>
+        <label>Nombre completo</label>
         <input type="text" id="nombre" placeholder="Tu nombre">
       </div>
-      <div class="field" id="campo-peso-inicial-wrap" style="display:none">
-        <div class="row-2">
-          <div class="field" style="margin-bottom:0">
-            <label>Peso actual (kg)</label>
-            <input type="number" id="peso" placeholder="ej. 72">
-          </div>
-          <div class="field" style="margin-bottom:0">
-            <label>Peso al inicio del trimestre (kg)</label>
-            <input type="number" id="peso-inicial" placeholder="ej. 75">
-          </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Peso al inicio (kg)</label>
+          <input type="number" id="peso-ini" placeholder="ej. 75">
+        </div>
+        <div class="field">
+          <label>Peso actual (kg)</label>
+          <input type="number" id="peso-act" placeholder="ej. 71">
         </div>
       </div>
     </div>
 
-    <!-- EXPERIENCIA CON EL SERVICIO -->
-    <div class="section">
-      <p class="section-label">Experiencia con el servicio</p>
+    <div class="sec">
+      <p class="sec-label">Progreso físico</p>
       <div class="field">
-        <label><span class="field-num">2</span>¿Cómo calificarías el plan que recibiste hasta ahora?</label>
-        <div class="scale-row" id="scale-progreso"></div>
-        <div class="scale-labels"><span>No se ajusta a mí</span><span>Perfecto para mí</span></div>
-      </div>
-      <div class="field">
-        <label><span class="field-num">3</span>¿El plan de entrenamiento y nutrición se adapta a tu ritmo de vida y posibilidades?</label>
-        <textarea id="cambios" placeholder="Horarios, disponibilidad, preferencias de comida, nivel de exigencia..."></textarea>
-      </div>
-      <div class="field" id="campo-medidas-wrap" style="display:none">
-        <label><span class="field-num">—</span>¿En qué parte del cuerpo notaste más cambios?</label>
-        <textarea id="medidas" placeholder="Abdomen, piernas, brazos, rostro, postura... lo que sea que hayas percibido."></textarea>
+        <label><span class="fnum">1</span>Cuéntame cómo fue tu progreso físico durante estos 3 meses. Escribe libremente.</label>
+        <textarea id="progreso-libre" placeholder="Cómo empezaste, qué notaste con el tiempo, cómo te ves y te sientes ahora..." style="min-height:110px"></textarea>
       </div>
     </div>
 
-    <!-- ENTRENAMIENTO -->
-    <div class="section">
-      <p class="section-label">Entrenamiento</p>
+    <div class="sec">
+      <p class="sec-label">Entrenamiento</p>
       <div class="field">
-        <label><span class="field-num">4</span>¿Cuántas veces por semana entrenaste en promedio?</label>
-        <div class="freq-row">
-          <button type="button" class="freq-btn" data-freq="Ninguna o casi ninguna" onclick="selectFreq(this)">Ninguna o casi ninguna</button>
-          <button type="button" class="freq-btn" data-freq="1–2 veces" onclick="selectFreq(this)">1–2 veces</button>
-          <button type="button" class="freq-btn" data-freq="3–4 veces" onclick="selectFreq(this)">3–4 veces</button>
-          <button type="button" class="freq-btn" data-freq="Cumplí cada entrenamiento" onclick="selectFreq(this)">Cumplí cada entrenamiento</button>
-        </div>
+        <label><span class="fnum">2</span>¿Cómo calificarías el acompañamiento en el entrenamiento durante el trimestre?</label>
+        <div class="scale-row" id="scale-entreno"></div>
+        <div class="scale-labels"><span>Muy mejorable</span><span>Excelente</span></div>
       </div>
       <div class="field">
-        <label><span class="field-num">5</span>¿Cómo te sentiste durante los entrenamientos en general?</label>
-        <div class="scale-row" id="scale-sensacion"></div>
-        <div class="scale-labels"><span>Muy difícil / sin energía</span><span>Con energía y motivado/a</span></div>
-      </div>
-      <div class="field">
-        <label><span class="field-num">6</span>¿Hubo algo que dificultó cumplir con el plan de entrenamiento?</label>
-        <textarea id="dificultad-entreno" placeholder="Falta de tiempo, lesiones, motivación, trabajo, viajes..."></textarea>
+        <label><span class="fnum">3</span>¿Cómo se podría mejorar el servicio de entrenamiento? ¿Qué añadirías o cambiarías?</label>
+        <textarea id="mejora-entreno" placeholder="Más variedad de ejercicios, mejor explicación de técnica, más frecuencia de seguimiento, ajustes al volumen..."></textarea>
       </div>
     </div>
 
-    <!-- NUTRICIÓN -->
-    <div class="section">
-      <p class="section-label">Nutrición</p>
+    <div class="sec">
+      <p class="sec-label">Nutrición</p>
       <div class="field">
-        <label><span class="field-num">7</span>¿Qué tan bien seguiste el plan alimentario?</label>
-        <div class="scale-row" id="scale-nutricion"></div>
+        <label><span class="fnum">4</span>¿Qué tan bien seguiste el plan alimentario durante el trimestre?</label>
+        <div class="scale-row" id="scale-nutri"></div>
         <div class="scale-labels"><span>Casi nada</span><span>Muy consistente</span></div>
       </div>
       <div class="field">
-        <label><span class="field-num">8</span>¿Qué situaciones o alimentos se te complicaron más?</label>
-        <textarea id="complicacion-nutri" placeholder="Fines de semana, reuniones sociales, ansiedad nocturna, cocinar..."></textarea>
+        <label><span class="fnum">5</span>¿Qué situaciones o alimentos se te complicaron más?</label>
+        <textarea id="complicacion" placeholder="Fines de semana, salidas, ansiedad, falta de tiempo..."></textarea>
       </div>
       <div class="field">
-        <label><span class="field-num">9</span>¿Cómo te sentiste con tu nivel de saciedad y energía a lo largo del día?</label>
-        <div class="scale-row" id="scale-energia"></div>
-        <div class="scale-labels"><span>Con hambre / cansado/a</span><span>Saciado/a y con energía</span></div>
+        <label><span class="fnum">6</span>¿Cómo mejorarías el servicio de nutrición o qué añadirías?</label>
+        <textarea id="mejora-nutri" placeholder="Más recetas, mayor flexibilidad en el plan, ajustes según cómo me sentí, más variedad..."></textarea>
       </div>
     </div>
 
-    <!-- BIENESTAR -->
-    <div class="section">
-      <p class="section-label">Bienestar y hábitos</p>
+    <div class="sec">
+      <p class="sec-label">Satisfacción con el acompañamiento</p>
       <div class="field">
-        <label><span class="field-num">10</span>¿Cómo estuvo la calidad de tu sueño?</label>
-        <div class="scale-row" id="scale-sueno"></div>
-        <div class="scale-labels"><span>Muy mal</span><span>Excelente</span></div>
+        <label><span class="fnum">7</span>¿Cómo calificarías el acompañamiento general recibido durante el trimestre?</label>
+        <div class="scale-row" id="scale-acomp"></div>
+        <div class="scale-labels"><span>Muy mejorable</span><span>Excelente</span></div>
       </div>
       <div class="field">
-        <label><span class="field-num">11</span>¿Cómo describirías tu estado de ánimo durante este primer mes?</label>
-        <textarea id="animo-m1" placeholder="Motivado/a, ansioso/a, irregular, estable, con altibajos..."></textarea>
+        <label><span class="fnum">8</span>¿Por qué elegiste esa puntuación?</label>
+        <textarea id="razon-acomp" placeholder="Lo que más valoro del acompañamiento, o lo que siento que podría mejorar..."></textarea>
       </div>
       <div class="field">
-        <label><span class="field-num">12</span>¿Hubo algo en tu vida personal o emocional que influyó en el proceso? Solo si quieres compartirlo.</label>
-        <textarea id="personal-m1" placeholder="Situaciones de estrés, cambios de rutina, emociones relacionadas con el cuerpo o la alimentación..."></textarea>
-      </div>
-    </div>
-
-    <!-- SATISFACCIÓN -->
-    <div class="section">
-      <p class="section-label">Satisfacción con el acompañamiento</p>
-      <div class="field">
-        <label><span class="field-num">13</span>¿Cómo calificarías el acompañamiento recibido?</label>
-        <div class="scale-row" id="scale-servicio"></div>
-        <div class="scale-labels"><span>Muy bajo</span><span>Excelente</span></div>
-      </div>
-      <div class="field">
-        <label><span class="field-num">14</span>¿Hay algo que mejorarías o que necesitas de manera diferente?</label>
-        <textarea id="mejora" placeholder="Más seguimiento, más flexibilidad en el plan, otro formato de comunicación..."></textarea>
+        <label><span class="fnum">9</span>¿Qué mejorarías del servicio en general?</label>
+        <textarea id="mejora-general" placeholder="Comunicación, frecuencia de seguimiento, formato del plan, flexibilidad, otro..."></textarea>
       </div>
     </div>
 
-    <!-- PSICOEMOCIONAL — solo mes 3 -->
-    <div class="section" id="seccion-psico" style="display:none">
-      <p class="section-label">Mundo interno</p>
-      <div class="psico-note">
-        Esta sección es opcional y confidencial. El objetivo es entender cómo te sentiste más allá de lo físico, para acompañarte de manera más completa.
+    <div class="sec gold">
+      <p class="sec-label g">Reflexión personal</p>
+      <div class="field">
+        <label><span class="fnum g">10</span>¿Cómo cambió tu autoconfianza o tu imagen de ti mismo/a a lo largo del trimestre?</label>
+        <textarea id="autoconfianza" placeholder="¿Te sientes diferente? ¿Más seguro/a, más cómodo/a con tu cuerpo, con más claridad sobre tus hábitos?"></textarea>
       </div>
       <div class="field">
-        <label><span class="field-num">17</span>¿Cómo fue tu relación con tu cuerpo durante estos 3 meses?</label>
-        <textarea id="relacion-cuerpo" placeholder="¿Te sentiste más a gusto contigo mismo/a? ¿Hubo momentos de frustración, orgullo o incomodidad?"></textarea>
+        <label><span class="fnum g">11</span>¿Qué fue lo que más te gustó del programa?</label>
+        <textarea id="lo-mejor" placeholder="Lo que más valoras, lo que repetirías, lo que te sorprendió positivamente..."></textarea>
       </div>
       <div class="field">
-        <label><span class="field-num">18</span>¿Cómo fue tu relación con la comida emocionalmente?</label>
-        <textarea id="relacion-comida" placeholder="¿Comiste por ansiedad o aburrimiento? ¿Sentiste culpa? ¿Tuviste más control?"></textarea>
+        <label><span class="fnum g">12</span>¿Qué parte del programa crees que se podría mejorar?</label>
+        <textarea id="a-mejorar" placeholder="Sin filtros. Tu opinión honesta es lo que nos ayuda a crecer."></textarea>
       </div>
       <div class="field">
-        <label><span class="field-num">19</span>¿Hubo momentos en que querías abandonar? ¿Qué te ayudó a seguir?</label>
-        <textarea id="momentos-dificiles" placeholder="¿Qué pensabas en esos momentos? ¿Qué estrategia o apoyo te sostuvo?"></textarea>
+        <label><span class="fnum g">13</span>¿Qué lograste aprender con el programa?</label>
+        <textarea id="aprendizaje" placeholder="Sobre tu cuerpo, tus hábitos, tu relación con el entrenamiento o la comida, sobre ti mismo/a..."></textarea>
       </div>
       <div class="field">
-        <label><span class="field-num">20</span>¿Cómo cambió tu autoconfianza o tu imagen de ti mismo/a a lo largo del trimestre?</label>
-        <textarea id="autoconfianza" placeholder="¿Te sientes diferente emocionalmente? ¿Más seguro/a, igual, mejor en algún aspecto?"></textarea>
-      </div>
-    </div>
-
-    <!-- CIERRE TRIMESTRAL — solo mes 3 -->
-    <div class="section" id="seccion-m3" style="display:none">
-      <p class="section-label">Cierre y próximo ciclo</p>
-      <div class="field">
-        <label><span class="field-num">21</span>¿Cuál fue el mayor logro de estos 3 meses? Puede ser físico, emocional o un hábito.</label>
-        <textarea id="logro" placeholder="No tiene que ser un número en la balanza. Puede ser constancia, energía, una nueva relación con la comida..."></textarea>
+        <label><span class="fnum g">14</span>¿Quieres dejar un mensaje para el equipo o para futuros participantes?</label>
+        <textarea id="mensaje" placeholder="Un consejo, algo que aprendiste, lo que le dirías a alguien que está pensando en empezar..."></textarea>
       </div>
       <div class="field">
-        <label><span class="field-num">22</span>¿Qué fue lo más difícil del trimestre?</label>
-        <textarea id="dificil-trimestre" placeholder="Lo más honesto posible."></textarea>
-      </div>
-      <div class="field">
-        <label><span class="field-num">23</span>¿Qué objetivo quieres priorizar el próximo trimestre?</label>
-        <textarea id="objetivo" placeholder="Puede ser físico, de hábito, emocional o de rendimiento."></textarea>
-      </div>
-      <div class="field">
-        <label><span class="field-num">24</span>¿Quieres dejar un mensaje para el equipo o para nuevos participantes?</label>
-        <textarea id="mensaje-equipo" placeholder="Algo que aprendiste, un consejo, una palabra de aliento... lo que sientas."></textarea>
-      </div>
-      <div class="field">
-        <label><span class="field-num">25</span>¿Recomendarías este servicio a alguien?</label>
+        <label><span class="fnum g">15</span>¿Recomendarías este servicio a alguien?</label>
         <div class="radio-group">
           <label class="radio-item"><input type="radio" name="recomienda" value="Sí, sin dudarlo"> Sí, sin dudarlo</label>
           <label class="radio-item"><input type="radio" name="recomienda" value="Probablemente sí"> Probablemente sí</label>
@@ -452,341 +225,314 @@ textarea { resize: vertical; min-height: 85px; line-height: 1.6; }
       </div>
     </div>
 
-    <!-- ESPACIO LIBRE -->
-    <div class="section">
-      <p class="section-label">Espacio libre</p>
+    <div class="sec">
+      <p class="sec-label">Espacio libre</p>
       <div class="field">
         <label>¿Algo más que quieras agregar o compartir?</label>
-        <textarea id="comentario-libre" placeholder="Este es tu espacio." style="min-height:100px"></textarea>
+        <textarea id="libre" placeholder="Este es tu espacio. Sin filtros." style="min-height:100px"></textarea>
       </div>
     </div>
 
     <div class="submit-area">
-      <button class="btn-submit" onclick="generarPDF()">Descargar reporte PDF</button>
-      <p class="submit-note">Se descarga automáticamente. Envíalo por WhatsApp al terminar :)</p>
+      <button class="btn-submit" id="btn-generar" onclick="generarYCompartir()">Generar reporte PDF</button>
+      <p class="submit-note" id="submit-note">Se genera el PDF y aparece la opción de compartirlo</p>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast">Reporte generado correctamente</div>
+<div class="toast" id="toast">Reporte generado</div>
 
 <script>
-let tipoForm = 'mes1';
-
-const escalas = {
-  'scale-progreso': {max:5, input:'progreso'},
-  // freq-entreno handled separately
-  'scale-sensacion':{max:5, input:'sensacion'},
-  'scale-nutricion':{max:5, input:'nutricion'},
-  'scale-energia':  {max:5, input:'energia'},
-  'scale-sueno':    {max:5, input:'sueno'},
-  'scale-estres':   {max:5, input:'estres'},
-  'scale-servicio': {max:5, input:'servicio'},
+var valores = {};
+var selecciones = {};
+var escalas = {
+  'scale-entreno': {max:5,key:'entreno'},
+  'scale-nutri':   {max:5,key:'nutri'},
+  'scale-acomp':   {max:5,key:'acomp'},
 };
-const valores = {};
-let freqSeleccionado = '';
 
-function selectFreq(el) {
-  freqSeleccionado = el.dataset.freq;
-  document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+function buildScales() {
+  Object.keys(escalas).forEach(function(id) {
+    var cfg=escalas[id], w=document.getElementById(id);
+    if(!w)return; w.innerHTML='';
+    for(var i=1;i<=cfg.max;i++){
+      (function(num){
+        var b=document.createElement('button');
+        b.type='button';b.className='scale-btn';b.textContent=num;b.dataset.val=num;
+        b.onclick=function(){
+          valores[cfg.key]=num;
+          w.querySelectorAll('.scale-btn').forEach(function(x){x.classList.toggle('active',parseInt(x.dataset.val)===num);});
+        };
+        w.appendChild(b);
+      })(i);
+    }
+  });
+}
+
+function selectItem(el,group){
+  selecciones[group]=el.dataset.val;
+  el.closest('.sel-list').querySelectorAll('.sel-item').forEach(function(b){b.classList.remove('active');});
   el.classList.add('active');
 }
-function buildScales() {
-  Object.entries(escalas).forEach(([id, cfg]) => {
-    const wrap = document.getElementById(id);
-    if (!wrap) return;
-    wrap.innerHTML = '';
-    for (let i = 1; i <= cfg.max; i++) {
-      const btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'scale-btn';
-      btn.textContent = i; btn.dataset.val = i;
-      btn.onclick = () => {
-        valores[cfg.input] = i;
-        wrap.querySelectorAll('.scale-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.val) === i));
-      };
-      wrap.appendChild(btn);
-    }
-  });
+
+function mostrarForm(){
+  document.getElementById('portada').style.display='none';
+  document.getElementById('formulario').style.display='block';
+  buildScales();window.scrollTo(0,0);
 }
-
-function mostrarForm(tipo) {
-  tipoForm = tipo || 'mes3';
-  document.getElementById('portada').style.display = 'none';
-  document.getElementById('formulario').style.display = 'block';
-  buildScales();
-  const esM3 = true;
-  document.getElementById('form-titulo').textContent = esM3 ? 'Cierre trimestral' : 'Check-in — Mes 1';
-  document.getElementById('form-subtitulo').textContent = esM3 ? 'Revisión completa de los 3 meses' : 'Evaluación del primer mes de tu plan';
-  ['seccion-m3','seccion-psico','campo-medidas-wrap','campo-peso-inicial-wrap'].forEach(id => {
-    document.getElementById(id).style.display = esM3 ? 'block' : 'none';
-  });
-  window.scrollTo(0, 0);
+function volver(){
+  document.getElementById('formulario').style.display='none';
+  document.getElementById('portada').style.display='flex';
+  window.scrollTo(0,0);
 }
+function v(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
-function volver() {
-  document.getElementById('formulario').style.display = 'none';
-  document.getElementById('portada').style.display = 'flex';
-  window.scrollTo(0, 0);
-}
+function construirPDF() {
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({unit:'mm',format:'a4'});
+  var W=210, ml=20, mr=20, cw=W-ml-mr, y=0;
 
-function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  // Palette
+  var white  = [255,255,255];
+  var ink    = [18,24,32];
+  var ink2   = [38,48,60];
+  var soft   = [90,108,128];
+  var muted  = [120,134,150];
+  var dim    = [160,172,188];
+  var faint  = [220,224,230];
+  var rule   = [230,233,238];
+  var navy2  = [240,243,248];
+  var text_dim=[80,95,112];
+  var sky    = [126,184,255];
+  var gold   = [180,140,60];
+  var accent = gold;
 
-function generarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const W = 210, ml = 18, mr = 18, cw = W - ml - mr;
-  let y = 0;
-
-  // Paleta PDF
-  const navy    = [8, 14, 28];
-  const navy2   = [13, 22, 40];
-  const sky     = [126, 184, 255];
-  const skyDim  = [26, 58, 107];
-  const gold    = [201, 168, 76];
-  const blanco  = [232, 237, 245];
-  const soft    = [136, 153, 176];
-  const borde   = [25, 45, 75];
-  const negro   = [8, 14, 28];
-
-  function checkPage(need=12) {
-    if (y + need > 275) { doc.addPage(); drawBg(); y = 22; }
+  function chk(n) {
+    n=n||12;
+    if (y+n>270) { doc.addPage(); pageBg(); y=22; }
   }
 
-  function drawBg() {
-    doc.setFillColor(...navy);
-    doc.rect(0, 0, W, 297, 'F');
+  function pageBg() {
+    doc.setFillColor.apply(doc, white);
+    doc.rect(0,0,W,297,'F');
   }
 
-  drawBg();
+  // ── PAGE 1 ──
+  pageBg();
 
-  // Header
-  doc.setFillColor(...navy2);
-  doc.rect(0, 0, W, 46, 'F');
-  doc.setFillColor(...sky);
-  doc.rect(0, 0, W, 2, 'F');
+  // Top accent stripe
+  doc.setFillColor.apply(doc, accent);
+  doc.rect(0, 0, W, 1, 'F');
 
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(7);
-  doc.setTextColor(...sky);
-  doc.text('STRENGTHLAB · @RENNZOLIFTS', ml, 12);
-
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(17);
-  doc.setTextColor(...blanco);
-  doc.text(tipoForm === 'mes1' ? 'Check-in — Mes 1' : 'Cierre Trimestral', ml, 24);
-
+  // Brand
   doc.setFont('helvetica','normal');
-  doc.setFontSize(9);
-  doc.setTextColor(...soft);
-  doc.text(tipoForm === 'mes1' ? 'Evaluación del primer mes de tu plan' : 'Revisión completa de los 3 meses', ml, 33);
+  doc.setFontSize(6.5);
+  doc.setTextColor.apply(doc, muted);
+  doc.text('STRENGTHLAB  ·  @RENNZOLIFTS', ml, 14);
 
-  const fecha = new Date().toLocaleDateString('es', {day:'2-digit', month:'long', year:'numeric'});
-  doc.text(fecha, W - mr, 33, {align:'right'});
-  y = 58;
-
-  // Nombre banner
-  const nombre = val('nombre') || 'Sin nombre';
-  doc.setFillColor(...skyDim);
-  doc.roundedRect(ml, y-7, cw, 16, 3, 3, 'F');
+  // Title
   doc.setFont('helvetica','bold');
-  doc.setFontSize(12);
-  doc.setTextColor(...blanco);
-  doc.text(nombre, ml+8, y+5);
-  y += 18;
+  doc.setFontSize(22);
+  doc.setTextColor.apply(doc, ink);
+  doc.text('Cierre Trimestral', ml, 32);
 
-  function seccion(titulo, useGold) {
-    checkPage(18);
-    y += 6;
-    const c = useGold ? gold : sky;
-    doc.setFillColor(...c);
-    doc.rect(ml, y, 2, 6, 'F');
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...c);
-    doc.text(titulo.toUpperCase(), ml+6, y+4.5);
-    doc.setDrawColor(...borde);
-    doc.line(ml+6 + doc.getTextWidth(titulo.toUpperCase()) + 3, y+2, ml+cw, y+2);
-    y += 12;
+  // Subtitle + date on same baseline
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor.apply(doc, muted);
+  doc.text('Revisión completa de los 3 meses', ml, 40);
+  var fecha = new Date().toLocaleDateString('es', {day:'2-digit',month:'long',year:'numeric'});
+  doc.text(fecha, W-mr, 40, {align:'right'});
+
+  // Rule
+  doc.setDrawColor.apply(doc, rule);
+  doc.setLineWidth(0.3);
+  doc.line(ml, 46, W-mr, 46);
+  y = 56;
+
+  // ── NOMBRE ──
+  var nombre = v('nombre') || 'Sin nombre';
+  doc.setFont('helvetica','normal'); doc.setFontSize(7);
+  doc.setTextColor.apply(doc, muted);
+  doc.text('CLIENTE', ml, y);
+  y += 5;
+  doc.setFont('helvetica','bold'); doc.setFontSize(14);
+  doc.setTextColor.apply(doc, ink);
+  doc.text(nombre, ml, y);
+  y += 4;
+  doc.setDrawColor.apply(doc, rule); doc.setLineWidth(0.3);
+  doc.line(ml, y, W-mr, y);
+  y += 12;
+
+  // ── SECTION ──
+  function sec(t, g) {
+    chk(20); y += 8;
+    var col = g ? gold : sky;
+    doc.setFont('helvetica','bold'); doc.setFontSize(7);
+    doc.setTextColor.apply(doc, col);
+    doc.text(t.toUpperCase(), ml, y);
+    y += 3;
+    doc.setDrawColor.apply(doc, col); doc.setLineWidth(0.25);
+    doc.line(ml, y, W-mr, y);
+    y += 7;
   }
 
-  function fila(label, valor) {
-    checkPage(13);
-    doc.setFillColor(...navy2);
-    doc.roundedRect(ml, y, cw, 11, 2, 2, 'F');
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(8.5);
-    doc.setTextColor(...soft);
-    doc.text(label, ml+4, y+7.5);
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(...blanco);
-    doc.text(valor || '—', W - mr - 4, y+7.5, {align:'right'});
-    y += 13;
-  }
-
-  function filaTexto(label, valor) {
-    if (!valor) return;
-    checkPage(18);
-    if (label) {
-      doc.setFont('helvetica','bold');
-      doc.setFontSize(8);
-      doc.setTextColor(...soft);
-      doc.text(label, ml, y);
-      y += 5;
-    }
-    const lines = doc.splitTextToSize(valor, cw);
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...blanco);
-    lines.forEach(l => { checkPage(6); doc.text(l, ml, y); y += 5; });
-    doc.setDrawColor(...borde);
-    doc.line(ml, y+1, ml+cw, y+1);
-    y += 8;
-  }
-
-  function filaTextoPsico(label, valor) {
-    if (!valor) return;
-    checkPage(20);
-    doc.setFillColor(15, 35, 65);
-    doc.roundedRect(ml, y-2, cw, 8, 2, 2, 'F');
-    doc.setFillColor(...sky);
-    doc.rect(ml, y-2, 2, 8, 'F');
-    doc.setFont('helvetica','bold');
-    doc.setFontSize(8);
-    doc.setTextColor(...sky);
-    doc.text(label, ml+6, y+4);
-    y += 10;
-    const lines = doc.splitTextToSize(valor, cw-4);
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...blanco);
-    lines.forEach(l => { checkPage(6); doc.text(l, ml+4, y); y += 5; });
-    doc.setDrawColor(...borde);
-    doc.line(ml, y+1, ml+cw, y+1);
-    y += 8;
-  }
-
-  function escalaVisual(label, key, maxVal=5) {
-    checkPage(14);
-    const v = valores[key] || 0;
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(8.5);
-    doc.setTextColor(...soft);
+  // ── BAR METRIC ──
+  function bar(label, key, mx) {
+    mx = mx || 5; chk(12);
+    var val = valores[key] || 0;
+    // Label
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+    doc.setTextColor.apply(doc, ink2);
     doc.text(label, ml, y);
-    const barX = ml + 104;
-    const barW = cw - 108;
-    doc.setFillColor(...borde);
-    doc.roundedRect(barX, y-4.5, barW, 5, 2, 2, 'F');
-    if (v > 0) {
-      doc.setFillColor(...sky);
-      doc.roundedRect(barX, y-4.5, barW*(v/maxVal), 5, 2, 2, 'F');
+    // Dots track
+    var bx = ml+95, bw = 48;
+    for (var d=0; d<mx; d++) {
+      var filled = d < val;
+      doc.setFillColor.apply(doc, filled ? accent : faint);
+      doc.ellipse(bx + d*(bw/mx) + 2, y-1.5, 1.8, 1.8, 'F');
     }
-    doc.setFont('helvetica','bold');
-    doc.setTextColor(...blanco);
-    doc.text(`${v}/${maxVal}`, barX + barW + 4, y);
+    // Value text
+    doc.setFont('helvetica','bold'); doc.setFontSize(8);
+    doc.setTextColor.apply(doc, ink);
+    doc.text(val+' / '+mx, W-mr, y, {align:'right'});
     y += 10;
   }
 
-  // —— PDF CONTENT
+  // ── KEY-VALUE ──
+  function fila(label, val) {
+    chk(10);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+    doc.setTextColor.apply(doc, muted);
+    doc.text(label, ml, y);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+    doc.setTextColor.apply(doc, ink);
+    doc.text(val || '—', W-mr, y, {align:'right'});
+    y += 9;
+  }
 
-  seccion('Datos personales');
-  fila('Nombre', val('nombre'));
-  if (tipoForm === 'mes3') {
-    fila('Peso actual', val('peso') ? val('peso')+' kg' : '—');
-    fila('Peso al inicio', val('peso-inicial') ? val('peso-inicial')+' kg' : '—');
-    const pi = parseFloat(val('peso-inicial')), pa = parseFloat(val('peso'));
-    if (!isNaN(pi) && !isNaN(pa)) {
-      const dif = (pa - pi).toFixed(1);
-      fila('Variación total', `${dif > 0 ? '+' : ''}${dif} kg`);
+  // ── TEXT BLOCK ──
+  function txt(label, val) {
+    if (!val) return; chk(16);
+    if (label) {
+      doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+      doc.setTextColor.apply(doc, muted);
+      doc.text(label, ml, y); y += 5;
+    }
+    var lines = doc.splitTextToSize(val, cw);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    doc.setTextColor.apply(doc, ink2);
+    lines.forEach(function(ln) { chk(6); doc.text(ln, ml, y); y += 5.5; });
+    y += 4;
+  }
+
+  // ── GOLD TEXT ──
+  function txtG(label, val) {
+    if (!val) return; chk(16);
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.5);
+    doc.setTextColor.apply(doc, gold);
+    doc.text(label, ml, y); y += 5;
+    var lines = doc.splitTextToSize(val, cw);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9);
+    doc.setTextColor.apply(doc, ink2);
+    lines.forEach(function(ln) { chk(6); doc.text(ln, ml, y); y += 5.5; });
+    y += 4;
+  }
+
+
+  sec('Progreso físico');
+  txt('Progreso durante el trimestre',v('progreso-libre'));
+
+  sec('Entrenamiento');
+  bar('Calificación del acompañamiento en entrenamiento','entreno');
+  txt('Cómo se podría mejorar el servicio de entrenamiento',v('mejora-entreno'));
+
+  sec('Nutrición');
+  bar('Adherencia al plan alimentario','nutri');
+  txt('Situaciones o alimentos complicados',v('complicacion'));
+  txt('Cómo mejorar el servicio de nutrición',v('mejora-nutri'));
+
+  sec('Satisfacción con el acompañamiento');
+  bar('Calificación del acompañamiento general','acomp');
+  txt('Por qué eligió esa puntuación',v('razon-acomp'));
+  txt('Qué mejoraría del servicio en general',v('mejora-general'));
+
+  sec('Reflexión personal',true);
+  txtG('Cambio en autoconfianza e imagen propia',v('autoconfianza'));
+  txtG('Lo que más gustó del programa',v('lo-mejor'));
+  txtG('Lo que se podría mejorar del programa',v('a-mejorar'));
+  txtG('Lo que aprendió con el programa',v('aprendizaje'));
+  txtG('Mensaje para el equipo o futuros participantes',v('mensaje'));
+  var recom=document.querySelector('input[name="recomienda"]:checked');
+  fila('¿Recomendaría el servicio?',recom?recom.value:'—');
+
+  sec('Espacio libre');
+  txt('',v('libre'));
+
+  var tp=doc.internal.getNumberOfPages();
+  for(var i=1;i<=tp;i++){
+    doc.setPage(i);
+    doc.setFillColor.apply(doc,navy2);doc.rect(0,285,W,12,'F');
+    doc.setFillColor.apply(doc,gold);doc.rect(0,285,W,1,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor.apply(doc,soft);
+    doc.text('STRENGTHLAB · @rennzolifts · Entrenamiento + Nutrición',ml,292);
+    doc.text(i+' / '+tp,W-mr,292,{align:'right'});
+  }
+
+
+  // ── FOOTER ──
+  var tp = doc.internal.getNumberOfPages();
+  for (var i=1; i<=tp; i++) {
+    doc.setPage(i);
+    doc.setFillColor(10,22,38); doc.rect(0,283,W,14,'F');
+    doc.setFillColor.apply(doc, accent); doc.rect(0,283,W,1,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7);
+    doc.setTextColor.apply(doc, dim);
+    doc.text('STRENGTHLAB · @rennzolifts · Entrenamiento + Nutrición', ml+1, 291);
+    doc.text(i+' / '+tp, W-mr, 291, {align:'right'});
+  }
+
+  // ── FOOTER ──
+  var tp = doc.internal.getNumberOfPages();
+  for (var i=1; i<=tp; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(220,224,230); doc.setLineWidth(0.3);
+    doc.line(20, 281, W-20, 281);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7);
+    doc.setTextColor(150,160,175);
+    doc.text('Strengthlab · @rennzolifts', 20, 287);
+    doc.text(i+' / '+tp, W-20, 287, {align:'right'});
+  }
+  return doc;
+}
+
+async function generarYCompartir(){
+  var btn=document.getElementById('btn-generar');
+  btn.textContent='Generando...';btn.disabled=true;
+  var nombre=v('nombre')||'reporte';
+  var slug=nombre.toLowerCase().split(' ').join('-');
+  var fileName='strengthlab-trimestre-'+slug+'.pdf';
+  var doc=construirPDF();
+  var blob=doc.output('blob');
+  var file=new File([blob],fileName,{type:'application/pdf'});
+  try{
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'Mi cierre trimestral — Strengthlab'});
+    } else {
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download=fileName;a.click();
+      URL.revokeObjectURL(url);
+      var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);
+      document.getElementById('submit-note').textContent='PDF descargado — adjúntalo en WhatsApp';
+    }
+  } catch(e){
+    if(e.name!=='AbortError'){
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=url;a.download=fileName;a.click();
+      URL.revokeObjectURL(url);
     }
   }
-
-  if (tipoForm === 'mes1') {
-    seccion('Experiencia con el servicio');
-    escalaVisual('Calificación del plan recibido', 'progreso');
-    filaTexto('Adaptación al ritmo de vida', val('cambios'));
-
-    seccion('Entrenamiento');
-    fila('Frecuencia de entrenamiento', freqSeleccionado || '—');
-    escalaVisual('Sensación durante los entrenamientos', 'sensacion');
-    filaTexto('Dificultades con el plan', val('dificultad-entreno'));
-
-    seccion('Nutrición');
-    escalaVisual('Adherencia al plan alimentario', 'nutricion');
-    filaTexto('Situaciones o alimentos complicados', val('complicacion-nutri'));
-    escalaVisual('Saciedad y energía diaria', 'energia');
-
-    seccion('Bienestar y hábitos');
-    escalaVisual('Calidad del sueño', 'sueno');
-    filaTexto('Estado de ánimo en el primer mes', val('animo-m1'));
-    filaTexto('Factores personales o emocionales', val('personal-m1'));
-
-    seccion('Satisfacción con el acompañamiento');
-    escalaVisual('Calificación del acompañamiento', 'servicio');
-    filaTexto('Sugerencias o necesidades', val('mejora'));
-  } else {
-    seccion('Progreso físico');
-    escalaVisual('Calificación del progreso físico', 'progreso');
-    filaTexto('Cambios percibidos', val('cambios'));
-    filaTexto('Zona del cuerpo con más cambios', val('medidas'));
-
-    seccion('Entrenamiento');
-    fila('Frecuencia de entrenamiento', freqSeleccionado || '—');
-    escalaVisual('Sensación durante los entrenamientos', 'sensacion');
-    filaTexto('Dificultades con el plan', val('dificultad-entreno'));
-
-    seccion('Nutrición');
-    escalaVisual('Adherencia al plan alimentario', 'nutricion');
-    filaTexto('Situaciones o alimentos complicados', val('complicacion-nutri'));
-    escalaVisual('Saciedad y energía diaria', 'energia');
-
-    seccion('Bienestar y hábitos');
-    escalaVisual('Calidad del sueño', 'sueno');
-    escalaVisual('Nivel de estrés (5 = muy tranquilo/a)', 'estres');
-    filaTexto('Estado de ánimo general', val('animo-m1'));
-    filaTexto('Factores personales o emocionales', val('personal-m1'));
-
-    seccion('Satisfacción con el acompañamiento');
-    escalaVisual('Calificación del acompañamiento', 'servicio');
-    filaTexto('Sugerencias o necesidades', val('mejora'));
-
-    seccion('Mundo interno', true);
-    filaTextoPsico('Relación con el cuerpo durante el trimestre', val('relacion-cuerpo'));
-    filaTextoPsico('Relación emocional con la comida', val('relacion-comida'));
-    filaTextoPsico('Momentos difíciles y qué ayudó a seguir', val('momentos-dificiles'));
-    filaTextoPsico('Autoconfianza e imagen propia', val('autoconfianza'));
-
-    seccion('Cierre y próximo ciclo', true);
-    filaTexto('Mayor logro del trimestre', val('logro'));
-    filaTexto('Lo más difícil del trimestre', val('dificil-trimestre'));
-    filaTexto('Objetivo para el próximo trimestre', val('objetivo'));
-    filaTexto('Mensaje para el equipo o nuevos participantes', val('mensaje-equipo'));
-    const recom = document.querySelector('input[name="recomienda"]:checked');
-    fila('¿Recomendaría el servicio?', recom ? recom.value : '—');
-  }
-
-  seccion('Espacio libre');
-  filaTexto('', val('comentario-libre'));
-
-  // Footer
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i);
-    doc.setFillColor(...navy2);
-    doc.rect(0, 285, W, 12, 'F');
-    doc.setFillColor(...sky);
-    doc.rect(0, 285, W, 1, 'F');
-    doc.setFont('helvetica','normal');
-    doc.setFontSize(7.5);
-    doc.setTextColor(...soft);
-    doc.text('STRENGTHLAB · @rennzolifts · Entrenamiento + Nutrición', ml, 292);
-    doc.text(`${i} / ${totalPages}`, W - mr, 292, {align:'right'});
-  }
-
-  const nombreArchivo = `strengthlab-${tipoForm}-${nombre.replace(/\s+/g,'-').toLowerCase()}.pdf`;
-  doc.save(nombreArchivo);
-  const toast = document.getElementById('toast');
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+  btn.textContent='Generar reporte PDF';btn.disabled=false;
 }
 </script>
 </body>
